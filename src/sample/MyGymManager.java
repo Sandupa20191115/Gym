@@ -3,10 +3,13 @@ package sample;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -20,42 +23,26 @@ public class MyGymManager extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-//        //mongo shit
-//        MongoClient mClient = new MongoClient("localhost",27017);
-//        MongoDatabase mdatabase = mClient.getDatabase("cwdata");
-//
-//        //creating a collection
-//        mdatabase.createCollection("gym",null);
-//
-//        //create a collection`
-////        if(mdatabase.getCollection("gym")==null){
-////            mdatabase.createCollection("gym");
-////        }
-//
-//        //accessing the collection
-//        MongoCollection collection = mdatabase.getCollection("student");
-//
-//        //create a document in the collection
-//        //Create a document in the collection
-//        Document document1 = new Document();
-//        document1.put("id", new DefaultMember());
-//        document1.put("firstName", "Hirushi");
-//        document1.put("lastName", "Perera");
-//        document1.put("age", 25);
-//
-//        //insert record as a document
-//        collection.insertOne(document1);
-
-
-
         Scanner input = new Scanner(System.in);    //scanner obj
 
         ArrayList<StudentMember> arrayOfStuMems = new ArrayList<>(); //arr to store student members
         ArrayList<Over60Member> arrayOfOldMems = new ArrayList<>(); //arr to store student members
 
-        StudentMember sandu1 = new StudentMember();
-        sandu1.setFirstName("Sandu");
+        StudentMember sandu1 = new StudentMember();   //testing
+        sandu1.setFirstName("Sandupa");
+        sandu1.setLastName("Egodage");
+        sandu1.setSchoolName("NC");
+        sandu1.setMembershipNumber(123456);
+        sandu1.setRelativeName("Ganga");
         arrayOfStuMems.add(sandu1);
+
+        StudentMember sandu2 = new StudentMember();
+        sandu2.setFirstName("Sandu");
+        sandu2.setLastName("Egodage");
+        sandu2.setSchoolName("NC");
+        sandu2.setMembershipNumber(123456);
+        sandu2.setRelativeName("Ganga");
+        arrayOfStuMems.add(sandu2);
 
         int mainAns = validatingInts("What Do u Want to do ?" +"\n"+
                 "Enter 1 to add a new member "+"\n"+
@@ -239,40 +226,72 @@ public class MyGymManager extends Application {
         }
 
         else if(mainAns==6){
-//            //opens GUI
-//            TableView<StudentMember> table;   //creating tableview
-//
-//            //first name column
-//            TableColumn<StudentMember, String> firstNameColumn = new TableColumn<>("First Name");
-////            firstNameColumn.setMinWidth(200);
-//            firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-////            firstNameColumn.setCellValueFactory();Factory(new PropertyValueFactory<StudentMember,String>("First Name"));
-//
-//            ObservableList<StudentMember> dataForTable = FXCollections.observableArrayList();
-//            dataForTable.addAll(arrayOfStuMems);
-//
-//            table = new TableView<>();
-//            table.setItems(dataForTable);
-//            table.getColumns().add(firstNameColumn);
-
-
 
             //opens GUI
             TableView table = new TableView();   //creating tableview
 
             //first name column
             TableColumn firstNameColumn = new TableColumn("First Name");
-//            firstNameColumn.setMinWidth(200);
             firstNameColumn.setCellValueFactory(new PropertyValueFactory("firstName"));
-//            firstNameColumn.setCellValueFactory();Factory(new PropertyValueFactory<StudentMember,String>("First Name"));
+
+            //last name column
+            TableColumn lastNameColumn = new TableColumn("Last Name");
+            lastNameColumn.setCellValueFactory(new PropertyValueFactory("lastName"));
+
+            //school column
+            TableColumn sclColumn = new TableColumn("School");
+            sclColumn.setCellValueFactory(new PropertyValueFactory("schoolName"));
+
+            //id column
+            TableColumn idColumn = new TableColumn("Membership ID");
+            idColumn.setCellValueFactory(new PropertyValueFactory("membershipNumber"));
+
+            //relative column
+            TableColumn relNameColumn = new TableColumn("Relative Name");
+            relNameColumn.setCellValueFactory(new PropertyValueFactory("relativeName"));
+
 
             ObservableList<StudentMember> dataForTable = FXCollections.observableArrayList();
             dataForTable.addAll(arrayOfStuMems);
 
             table.setItems(dataForTable);
-            table.getColumns().add(firstNameColumn);
+            table.getColumns().addAll(firstNameColumn,lastNameColumn,sclColumn,idColumn,relNameColumn);
 
-            VBox root = new VBox(table);
+            Label lblsearch = new Label("Search :");
+            TextField tfsearch = new TextField();
+            Button btnSearch = new Button("Search");
+
+            btnSearch.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+
+                    ArrayList aftersearcharr = new ArrayList();
+                    ObservableList<StudentMember> aftersearchobs = FXCollections.observableArrayList();
+
+                    String searchValue = tfsearch.getText();
+                    for (StudentMember anyobj : arrayOfStuMems){
+                        if(anyobj.getFirstName().equals(searchValue)){
+                            aftersearcharr.add(anyobj);
+                        }
+                    }
+
+                    if(aftersearcharr.size() == 0){
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("No record!!!");
+                        alert.setContentText("There is not a record with the keyword "+searchValue);
+                        alert.showAndWait();
+                        aftersearcharr = arrayOfStuMems;
+                    }
+
+                    aftersearchobs.addAll(aftersearcharr);
+
+                    table.setItems(aftersearchobs);
+                }
+            });
+
+            HBox searchStuff = new HBox(10,lblsearch,tfsearch,btnSearch);
+
+            VBox root = new VBox(10,searchStuff,table);
             ///////////////////////**/////////////////////////////////
             Scene homeScene = new Scene(root,500,500);
             primaryStage.setTitle("Gym Manager");
@@ -327,5 +346,13 @@ public class MyGymManager extends Application {
         }
     }
 
+    public static void searchBack(String searchName, ArrayList<StudentMember> someArr){
+        for(StudentMember anyobj : someArr){
 
+        }
+    }
+
+    public static void changeObList(){
+
+    }
 }
