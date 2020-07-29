@@ -28,41 +28,64 @@ public class MyGymManager extends Application {
 
         Scanner input = new Scanner(System.in);    //scanner obj
 
-        ArrayList<StudentMember> arrayOfStuMems = new ArrayList<>(); //arr to store student members
-        ArrayList<Over60Member> arrayOfOldMems = new ArrayList<>(); //arr to store old members
-        ArrayList<DefaultMember> arrayOfDefMems = new ArrayList<>(); //arr to store old members
+        ArrayList<Over60Member> arrayOfOldMems  =  new ArrayList<>() ; //arr to store old members
+        ArrayList<StudentMember> arrayOfStuMems =  new ArrayList<>(); //arr to store student members
+        ArrayList<DefaultMember> arrayOfDefMems =  new ArrayList<>(); //arr to store old members
 
-        FileInputStream fis = new FileInputStream("Members.txt");
-        boolean cont = true;
-        while(true){
-            try{
-                ObjectInputStream input2 = new ObjectInputStream(fis);
-                DefaultMember hotFromTheFile = (DefaultMember) input2.readObject();
-                if (hotFromTheFile != null) {
-                    if(hotFromTheFile instanceof StudentMember){
-                        arrayOfStuMems.add((StudentMember) hotFromTheFile);
-                    }
-                    else if(hotFromTheFile instanceof Over60Member){
-                        arrayOfOldMems.add((Over60Member) hotFromTheFile);
-                    }
-                    else {
-                        arrayOfDefMems.add(hotFromTheFile);
-                    }
-                }
-                else{
-                    cont = false;
-                }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    break;
-            }
+//        FileInputStream fis = new FileInputStream("Member5s.txt");
+//        boolean cont = true;
+//        while(true){
+//            try{
+//                ObjectInputStream input2 = new ObjectInputStream(fis);
+//                DefaultMember hotFromTheFile = (DefaultMember) input2.readObject();
+//                if (hotFromTheFile != null) {
+//                    if(hotFromTheFile instanceof StudentMember){
+//                        arrayOfStuMems.add((StudentMember) hotFromTheFile);
+//                    }
+//                    else if(hotFromTheFile instanceof Over60Member){
+//                        arrayOfOldMems.add((Over60Member) hotFromTheFile);
+//                    }
+//                    else {
+//                        arrayOfDefMems.add(hotFromTheFile);
+//                    }
+//                }
+//                else{
+//                    cont = false;
+//                }
+//            }
+//            catch (IOException e) {
+////                    e.printStackTrace();
+//                    break;
+//            }
+//        }
+
+        //reading from file
+        FileInputStream deffis = new FileInputStream("Default Array.txt");
+        ObjectInputStream defois = new ObjectInputStream(deffis);
+//        arrayOfDefMems = (ArrayList) defois.readObject();
+
+        FileInputStream stufis = new FileInputStream("Student Array.txt");
+        try{
+            ObjectInputStream stuois = new ObjectInputStream(stufis);
+            arrayOfStuMems = (ArrayList) stuois.readObject();
+        }catch (IOException e){
+            e.printStackTrace();
         }
 
-        printArr(arrayOfStuMems);
+
+        FileInputStream oldfis = new FileInputStream("Old Array.txt");
+        ObjectInputStream oldois = new ObjectInputStream(oldfis);
+//        arrayOfOldMems = (ArrayList) oldois.readObject();
 
         //saving to file
-        FileOutputStream memfos = new FileOutputStream(new File("Members.txt"),true);
-        ObjectOutputStream memous = new ObjectOutputStream(memfos);
+        FileOutputStream deffos = new FileOutputStream(new File("Default Array.txt"));
+        ObjectOutputStream defous = new ObjectOutputStream(deffos);
+
+        FileOutputStream stufos = new FileOutputStream(new File("Student Array.txt"));
+        ObjectOutputStream stuous = new ObjectOutputStream(stufos);
+
+        FileOutputStream oldfos = new FileOutputStream(new File("Old Array.txt"));
+        ObjectOutputStream oldous = new ObjectOutputStream(oldfos);
 
         int mainAns = validatingInts("What Do u Want to do ?" +"\n"+
                 "Enter 1 to add a new member "+"\n"+
@@ -74,8 +97,8 @@ public class MyGymManager extends Application {
 
         if(mainAns==1){
             //adding new member
-            int classChoose = validatingInts("Choose member type : " +
-                    "1 for student member , 2 for over 60 member ");
+            int classChoose = validatingInts("Choose member type : " + "\n" +
+                    "1 for student member , 2 for over 60 member ,3 for default member");
             if(classChoose == 1){
 
                 StudentMember currentStuMem = new StudentMember();
@@ -89,10 +112,10 @@ public class MyGymManager extends Application {
                 arrayOfStuMems.add(currentStuMem);
 
                 // Write objects to file
-                memous.writeObject(currentStuMem);
+                stuous.writeObject(arrayOfStuMems);
 
-                memous.close();
-                memfos.close();
+                stuous.close();
+                stufos.close();
 
             }
             else if(classChoose == 2){
@@ -114,12 +137,26 @@ public class MyGymManager extends Application {
                 arrayOfOldMems.add(currentOver60Mem);
 
                 // Write objects to file
-                memous.writeObject(currentOver60Mem);
+                oldous.writeObject(arrayOfStuMems);
 
-                memous.close();
-                memfos.close();
+                oldous.close();
+                oldfos.close();
             }
+            else if(classChoose == 3){
+                DefaultMember currentdefmem = new DefaultMember();
 
+                currentdefmem.setFirstName(validatingStrings("Enter first name :"));
+                currentdefmem.setLastName(validatingStrings("Enter last name :"));
+                currentdefmem.setMembershipNumber(validatingInts("Enter membership no :"));
+                currentdefmem.setRelativeName("Enter relative name :");
+
+                arrayOfDefMems.add(currentdefmem);
+
+                defous.writeObject(currentdefmem);
+
+                defous.close();
+                deffos.close();
+            }
         }
 
         else if(mainAns==2){
@@ -232,32 +269,7 @@ public class MyGymManager extends Application {
         }
 
         else if(mainAns==5){
-            StudentMember oddson = new StudentMember();
-            oddson.setFirstName("Sandu");
-            StudentMember oddson2 = new StudentMember();
-            oddson.setFirstName("Sandu2");
-
-            //saving to file
-//            FileOutputStream memfos = new FileOutputStream(new File("Members.txt"),true);
-//            ObjectOutputStream memous = new ObjectOutputStream(memfos);
-
-            // Write objects to file
-            memous.writeObject(oddson);
-            memous.writeObject(oddson2);
-
-            memous.close();
-            memfos.close();
-
-            FileInputStream memfi = new FileInputStream(new File("Members.txt"));
-            ObjectInputStream memoi = new ObjectInputStream(memfi);
-
-            //read
-            DefaultMember hotFromFile = (DefaultMember) memoi.readObject();
-
-            System.out.println(hotFromFile.getFirstName());
-
-            memoi.close();
-            memfi.close();
+            //file writing
 
         }
 
@@ -303,6 +315,7 @@ public class MyGymManager extends Application {
             TextField tfsearch = new TextField();
             Button btnSearch = new Button("Search");
 
+            ArrayList<StudentMember> finalArrayOfStuMems = arrayOfStuMems;
             btnSearch.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
@@ -311,7 +324,7 @@ public class MyGymManager extends Application {
                     ObservableList<StudentMember> aftersearchobs = FXCollections.observableArrayList();
 
                     String searchValue = tfsearch.getText();
-                    for (StudentMember anyobj : arrayOfStuMems){
+                    for (StudentMember anyobj : finalArrayOfStuMems){
                         if(anyobj.getFirstName().equals(searchValue)){
                             aftersearcharr.add(anyobj);
                         }
@@ -322,7 +335,7 @@ public class MyGymManager extends Application {
                         alert.setTitle("No record!!!");
                         alert.setContentText("There is not a record with the keyword "+searchValue);
                         alert.showAndWait();
-                        aftersearcharr = arrayOfStuMems;
+                        aftersearcharr = finalArrayOfStuMems;
                     }
 
                     aftersearchobs.addAll(aftersearcharr);
@@ -340,7 +353,8 @@ public class MyGymManager extends Application {
             primaryStage.setScene(homeScene);
             primaryStage.show();
         }
-
+        System.out.println("End");
+        System.exit(0);
     }
 
 
