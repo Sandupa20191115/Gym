@@ -1,21 +1,15 @@
 package sample;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Scanner;
 
-public class DefaultMember extends Users{
+public class DefaultMember extends Users implements Serializable {
     private String firstName;
     private String lastName;
     private int membershipNumber;
     private Date StartMembershipDate;
-//    private sample.Date
     private String relativeName;
-
-    Scanner in = new Scanner(System.in);
-//    public DefaultMember(){
-//        int deMember = 0;
-//        deMember += 1;
-//    }
 
     public String getFirstName() {
         return firstName;

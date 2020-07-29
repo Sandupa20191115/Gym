@@ -1,6 +1,8 @@
 package sample;
 
-public class Over60Member extends DefaultMember{
+import java.io.Serializable;
+
+public class Over60Member extends DefaultMember implements Serializable {
     private int age;
 
     public int getAge() {

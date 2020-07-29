@@ -1,6 +1,8 @@
 package sample;
 
-public class StudentMember extends  DefaultMember{
+import java.io.Serializable;
+
+public class StudentMember extends DefaultMember implements Serializable {
     private String schoolName;
 
     public String getSchoolName() {

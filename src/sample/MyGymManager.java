@@ -13,6 +13,7 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -23,26 +24,45 @@ public class MyGymManager extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
+
+
         Scanner input = new Scanner(System.in);    //scanner obj
 
         ArrayList<StudentMember> arrayOfStuMems = new ArrayList<>(); //arr to store student members
-        ArrayList<Over60Member> arrayOfOldMems = new ArrayList<>(); //arr to store student members
+        ArrayList<Over60Member> arrayOfOldMems = new ArrayList<>(); //arr to store old members
+        ArrayList<DefaultMember> arrayOfDefMems = new ArrayList<>(); //arr to store old members
 
-        StudentMember sandu1 = new StudentMember();   //testing
-        sandu1.setFirstName("Sandupa");
-        sandu1.setLastName("Egodage");
-        sandu1.setSchoolName("NC");
-        sandu1.setMembershipNumber(123456);
-        sandu1.setRelativeName("Ganga");
-        arrayOfStuMems.add(sandu1);
+        FileInputStream fis = new FileInputStream("Members.txt");
+        boolean cont = true;
+        while(true){
+            try{
+                ObjectInputStream input2 = new ObjectInputStream(fis);
+                DefaultMember hotFromTheFile = (DefaultMember) input2.readObject();
+                if (hotFromTheFile != null) {
+                    if(hotFromTheFile instanceof StudentMember){
+                        arrayOfStuMems.add((StudentMember) hotFromTheFile);
+                    }
+                    else if(hotFromTheFile instanceof Over60Member){
+                        arrayOfOldMems.add((Over60Member) hotFromTheFile);
+                    }
+                    else {
+                        arrayOfDefMems.add(hotFromTheFile);
+                    }
+                }
+                else{
+                    cont = false;
+                }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    break;
+            }
+        }
 
-        StudentMember sandu2 = new StudentMember();
-        sandu2.setFirstName("Sandu");
-        sandu2.setLastName("Egodage");
-        sandu2.setSchoolName("NC");
-        sandu2.setMembershipNumber(123456);
-        sandu2.setRelativeName("Ganga");
-        arrayOfStuMems.add(sandu2);
+        printArr(arrayOfStuMems);
+
+        //saving to file
+        FileOutputStream memfos = new FileOutputStream(new File("Members.txt"),true);
+        ObjectOutputStream memous = new ObjectOutputStream(memfos);
 
         int mainAns = validatingInts("What Do u Want to do ?" +"\n"+
                 "Enter 1 to add a new member "+"\n"+
@@ -68,27 +88,11 @@ public class MyGymManager extends Application {
 
                 arrayOfStuMems.add(currentStuMem);
 
-                //opens GUI
-                TableView<StudentMember> table;   //creating tableview
+                // Write objects to file
+                memous.writeObject(currentStuMem);
 
-                //first name column
-                TableColumn<StudentMember, String> firstNameColumn = new TableColumn<>("First Name");
-                firstNameColumn.setMinWidth(200);
-                firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-
-                ObservableList<StudentMember> dataForTable = FXCollections.observableArrayList();
-                dataForTable.addAll(arrayOfStuMems);
-
-                table = new TableView<>();
-                table.setItems(dataForTable);
-                table.getColumns().addAll(firstNameColumn);
-
-                VBox root = new VBox();
-                ///////////////////////**/////////////////////////////////
-                Scene homeScene = new Scene(root,500,500);
-                primaryStage.setTitle("Gym Manager");
-                primaryStage.setScene(homeScene);
-                primaryStage.show();
+                memous.close();
+                memfos.close();
 
             }
             else if(classChoose == 2){
@@ -108,6 +112,12 @@ public class MyGymManager extends Application {
                 }
                 currentOver60Mem.setRelativeName(validatingStrings("Enter relative name : "));
                 arrayOfOldMems.add(currentOver60Mem);
+
+                // Write objects to file
+                memous.writeObject(currentOver60Mem);
+
+                memous.close();
+                memfos.close();
             }
 
         }
@@ -222,7 +232,33 @@ public class MyGymManager extends Application {
         }
 
         else if(mainAns==5){
+            StudentMember oddson = new StudentMember();
+            oddson.setFirstName("Sandu");
+            StudentMember oddson2 = new StudentMember();
+            oddson.setFirstName("Sandu2");
+
             //saving to file
+//            FileOutputStream memfos = new FileOutputStream(new File("Members.txt"),true);
+//            ObjectOutputStream memous = new ObjectOutputStream(memfos);
+
+            // Write objects to file
+            memous.writeObject(oddson);
+            memous.writeObject(oddson2);
+
+            memous.close();
+            memfos.close();
+
+            FileInputStream memfi = new FileInputStream(new File("Members.txt"));
+            ObjectInputStream memoi = new ObjectInputStream(memfi);
+
+            //read
+            DefaultMember hotFromFile = (DefaultMember) memoi.readObject();
+
+            System.out.println(hotFromFile.getFirstName());
+
+            memoi.close();
+            memfi.close();
+
         }
 
         else if(mainAns==6){
@@ -250,9 +286,15 @@ public class MyGymManager extends Application {
             TableColumn relNameColumn = new TableColumn("Relative Name");
             relNameColumn.setCellValueFactory(new PropertyValueFactory("relativeName"));
 
+            //relative column
+            TableColumn ageColumn = new TableColumn("Age");
+            ageColumn.setCellValueFactory(new PropertyValueFactory("age"));
 
-            ObservableList<StudentMember> dataForTable = FXCollections.observableArrayList();
+
+            ObservableList<DefaultMember> dataForTable = FXCollections.observableArrayList();
             dataForTable.addAll(arrayOfStuMems);
+            dataForTable.addAll(arrayOfDefMems);
+            dataForTable.addAll(arrayOfOldMems);
 
             table.setItems(dataForTable);
             table.getColumns().addAll(firstNameColumn,lastNameColumn,sclColumn,idColumn,relNameColumn);
@@ -338,10 +380,10 @@ public class MyGymManager extends Application {
 
     public static void printArr(ArrayList<StudentMember> somearr){
         for(StudentMember anyobj : somearr){
-            System.out.print(anyobj.getFirstName());
-            System.out.print(anyobj.getLastName());
-            System.out.print(anyobj.getMembershipNumber());
-            System.out.print(anyobj.getRelativeName());
+            System.out.println(anyobj.getFirstName());
+            System.out.println(anyobj.getLastName());
+            System.out.println(anyobj.getMembershipNumber());
+            System.out.println(anyobj.getRelativeName());
             //line to get the membership date after its all sorted out
         }
     }
