@@ -32,60 +32,25 @@ public class MyGymManager extends Application {
         ArrayList<StudentMember> arrayOfStuMems =  new ArrayList<>(); //arr to store student members
         ArrayList<DefaultMember> arrayOfDefMems =  new ArrayList<>(); //arr to store old members
 
-//        FileInputStream fis = new FileInputStream("Member5s.txt");
-//        boolean cont = true;
-//        while(true){
-//            try{
-//                ObjectInputStream input2 = new ObjectInputStream(fis);
-//                DefaultMember hotFromTheFile = (DefaultMember) input2.readObject();
-//                if (hotFromTheFile != null) {
-//                    if(hotFromTheFile instanceof StudentMember){
-//                        arrayOfStuMems.add((StudentMember) hotFromTheFile);
-//                    }
-//                    else if(hotFromTheFile instanceof Over60Member){
-//                        arrayOfOldMems.add((Over60Member) hotFromTheFile);
-//                    }
-//                    else {
-//                        arrayOfDefMems.add(hotFromTheFile);
-//                    }
-//                }
-//                else{
-//                    cont = false;
-//                }
-//            }
-//            catch (IOException e) {
-////                    e.printStackTrace();
-//                    break;
-//            }
-//        }
-
-        //reading from file
-        FileInputStream deffis = new FileInputStream("Default Array.txt");
-        ObjectInputStream defois = new ObjectInputStream(deffis);
-//        arrayOfDefMems = (ArrayList) defois.readObject();
-
-        FileInputStream stufis = new FileInputStream("Student Array.txt");
+        FileInputStream defaultMemberFileInputStream = null;
+        ObjectInputStream defaultMemberObjectInputStream = null;
         try{
-            ObjectInputStream stuois = new ObjectInputStream(stufis);
-            arrayOfStuMems = (ArrayList) stuois.readObject();
+            defaultMemberFileInputStream = new FileInputStream(new File("DefaultArray.txt"));
+            defaultMemberObjectInputStream = new ObjectInputStream(defaultMemberFileInputStream);
+            arrayOfDefMems = (ArrayList<DefaultMember>) defaultMemberObjectInputStream.readObject();
+        }catch (EOFException  e){
+            // this is fine, it just says end of file reached.
         }catch (IOException e){
             e.printStackTrace();
+        } finally {
+            if (defaultMemberFileInputStream != null) {
+                defaultMemberFileInputStream.close();
+            }
+            if (defaultMemberObjectInputStream != null) {
+                defaultMemberObjectInputStream.close();
+            }
         }
 
-
-        FileInputStream oldfis = new FileInputStream("Old Array.txt");
-        ObjectInputStream oldois = new ObjectInputStream(oldfis);
-//        arrayOfOldMems = (ArrayList) oldois.readObject();
-
-        //saving to file
-        FileOutputStream deffos = new FileOutputStream(new File("Default Array.txt"));
-        ObjectOutputStream defous = new ObjectOutputStream(deffos);
-
-        FileOutputStream stufos = new FileOutputStream(new File("Student Array.txt"));
-        ObjectOutputStream stuous = new ObjectOutputStream(stufos);
-
-        FileOutputStream oldfos = new FileOutputStream(new File("Old Array.txt"));
-        ObjectOutputStream oldous = new ObjectOutputStream(oldfos);
 
         int mainAns = validatingInts("What Do u Want to do ?" +"\n"+
                 "Enter 1 to add a new member "+"\n"+
@@ -112,10 +77,6 @@ public class MyGymManager extends Application {
                 arrayOfStuMems.add(currentStuMem);
 
                 // Write objects to file
-                stuous.writeObject(arrayOfStuMems);
-
-                stuous.close();
-                stufos.close();
 
             }
             else if(classChoose == 2){
@@ -137,10 +98,6 @@ public class MyGymManager extends Application {
                 arrayOfOldMems.add(currentOver60Mem);
 
                 // Write objects to file
-                oldous.writeObject(arrayOfStuMems);
-
-                oldous.close();
-                oldfos.close();
             }
             else if(classChoose == 3){
                 DefaultMember currentdefmem = new DefaultMember();
@@ -152,10 +109,23 @@ public class MyGymManager extends Application {
 
                 arrayOfDefMems.add(currentdefmem);
 
-                defous.writeObject(currentdefmem);
-
-                defous.close();
-                deffos.close();
+                FileOutputStream defaultMemberFileOutputStream = null;
+                ObjectOutputStream defaultMemberObjectOutputStream = null;
+                try{
+                    defaultMemberFileOutputStream = new FileOutputStream(new File("DefaultArray.txt"));
+                    defaultMemberObjectOutputStream = new ObjectOutputStream(defaultMemberFileOutputStream);
+                    // writing updated array list.
+                    defaultMemberObjectOutputStream.writeObject(arrayOfDefMems);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }finally{
+                    if (defaultMemberFileOutputStream != null) {
+                        defaultMemberFileOutputStream.close();
+                    }
+                    if (defaultMemberObjectOutputStream != null) {
+                        defaultMemberObjectOutputStream.close();
+                    }
+                }
             }
         }
 
@@ -211,6 +181,13 @@ public class MyGymManager extends Application {
                 System.out.print(anyobj.getLastName());
                 System.out.print(anyobj.getMembershipNumber());
                 System.out.print(anyobj.getRelativeName());
+                //line to get the membership date after its all sorted out
+            }
+            for(DefaultMember defaultMember : arrayOfDefMems){
+                System.out.print(defaultMember.getFirstName());
+                System.out.print(defaultMember.getLastName());
+                System.out.print(defaultMember.getMembershipNumber());
+                System.out.print(defaultMember.getRelativeName());
                 //line to get the membership date after its all sorted out
             }
 
