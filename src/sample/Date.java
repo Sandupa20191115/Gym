@@ -23,4 +23,8 @@ public class Date {
 
         this.newDate = newDate;
     }
+
+    public static String datesetter(int year,int month,int date){
+        return year +"/"+ month +"/"+date;
+    }
 }
