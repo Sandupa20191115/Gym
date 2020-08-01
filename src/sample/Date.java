@@ -2,29 +2,39 @@ package sample;
 
 import java.util.Scanner;
 
+import static sample.MyGymManager.validatingInts;
+
 public class Date {
-    String newDate;
-    public Scanner in = new Scanner(System.in);
-    public String getNewDate() {
-        return newDate;
+    private String fullDate;
+    int date;
+    int month;
+    int year;
+
+    public String getFullDate() {
+        return fullDate;
     }
 
-    public void setNewDate(String newDate) {
-        System.out.println("Enter the membership Year : ");
-        String enteredYear = in.nextLine();
+    public void setFullDate() {
 
-        System.out.println("Enter the membership Month : ");
-        String enteredMonth = in.nextLine();
+        year = validatingInts("Enter Year : ");
 
-        System.out.println("Enter the membership Date : ");
-        String enteredDate = in.nextLine();
+        while (true){
+            month = validatingInts("Enter month :");
+            if(month>12 || month < 1)     //checks if its an invalid month
+                System.out.println("Invalid Month");
+            else
+                break;
 
-        newDate = enteredYear + "/" + enteredMonth + "/" + enteredDate;
+        }
 
-        this.newDate = newDate;
-    }
+        while (true){
+            date = validatingInts("Enter date : ");
+            if(date>31 || date <1)           //checks if its an invalid date
+                System.out.println("Invalid Date");
+            else
+                break;
+        }
 
-    public static String datesetter(int year,int month,int date){
-        return year +"/"+ month +"/"+date;
+        this.fullDate = year +"/"+ month +"/"+ date;
     }
 }

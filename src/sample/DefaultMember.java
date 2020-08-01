@@ -8,25 +8,17 @@ public class DefaultMember implements Serializable {
     private String lastName;
     private int membershipNumber;
     private String relativeName;
-//    private Date defdate;
+    ///////////////////
+    private String newdate;
 
-    public String getMemDate() {
-        return memDate;
+    public String getNewdate() {
+        return newdate;
     }
 
-    public void setMemDate(String memDate) {
-        this.memDate = memDate;
+    public void setNewdate(String newdate) {
+        this.newdate = newdate;
     }
-
-    private String memDate;
-
-//    public Date getDefdate() {
-//        return defdate;
-//    }
-
-//    public void setDefdate(Date defdate) {
-//        this.defdate = defdate;
-//    }
+    /////////////////////////
 
     public String getFirstName() {
         return firstName;

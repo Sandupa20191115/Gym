@@ -25,9 +25,6 @@ public class MyGymManager extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        Scanner input = new Scanner(System.in);    //scanner obj
-        Scanner inputdate = new Scanner(System.in);
-
         ArrayList<Over60Member> arrayOfOldMems  =  new ArrayList<>() ; //arr to store old members
         ArrayList<StudentMember> arrayOfStuMems =  new ArrayList<>(); //arr to store student members
         ArrayList<DefaultMember> arrayOfDefMems =  new ArrayList<>(); //arr to store old members
@@ -117,7 +114,11 @@ public class MyGymManager extends Application {
                     currentStuMem.setMembershipNumber(validatingInts("Enter membership no : "));
                     currentStuMem.setRelativeName(validatingStrings("Enter relative name : "));
                     currentStuMem.setSchoolName(validatingStrings("Enter School name : "));
-                    currentStuMem.setMemDate(dateValidating());
+
+                    System.out.println("--Getting Membership Date--");
+                    Date currentMemDate = new Date();
+                    currentMemDate.setFullDate();
+                    currentStuMem.setNewdate(currentMemDate.getFullDate());
 
                     arrayOfStuMems.add(currentStuMem);
 
@@ -133,12 +134,20 @@ public class MyGymManager extends Application {
                         if (currentOver60Mem.getAge() > 99){
                             System.out.println("Impractical age! Try again");
                         }
+                        else if (currentOver60Mem.getAge() < 60 ){
+                            System.out.println("Impractical age! Try again");
+                        }
                         else{
                             break;
                         }
                     }
                     currentOver60Mem.setRelativeName(validatingStrings("Enter relative name : "));
-                    currentOver60Mem.setMemDate(dateValidating());
+
+                    System.out.println("--Getting Membership Date--");
+                    Date currentMemDate = new Date();
+                    currentMemDate.setFullDate();
+                    currentOver60Mem.setNewdate(currentMemDate.getFullDate());
+
                     arrayOfOldMems.add(currentOver60Mem);
 
                 }
@@ -149,7 +158,12 @@ public class MyGymManager extends Application {
                     currentdefmem.setLastName(validatingStrings("Enter last name :"));
                     currentdefmem.setMembershipNumber(validatingInts("Enter membership no :"));
                     currentdefmem.setRelativeName(validatingStrings("Enter relative name :"));
-                    currentdefmem.setMemDate(dateValidating());
+
+                    System.out.println("--Getting Membership Date--");
+                    Date currentMemDate = new Date();
+                    currentMemDate.setFullDate();
+                    currentdefmem.setNewdate(currentMemDate.getFullDate());
+
                     arrayOfDefMems.add(currentdefmem);
 
                 }
@@ -167,31 +181,31 @@ public class MyGymManager extends Application {
             Iterator<StudentMember> studentMemberIterator = arrayOfStuMems.iterator();    //had to use an iterator since remove will cause an exception using a for loop
             while (studentMemberIterator.hasNext()){
                 if(studentMemberIterator.next().getMembershipNumber()==shoulddel){   //gets relevent obj
-                    System.out.println("The member deleted is a "+studentMemberIterator.getClass().getSimpleName());
+                    System.out.println("You have deleted a student member");
                     studentMemberIterator.remove();   //removes
                 }
                 else{
-                    System.out.println("Membership no not found");
+                    System.out.println("The membership no doesnt belong to a student member");
                 }
             }
             Iterator<DefaultMember> defaultMemberIterator = arrayOfDefMems.iterator();
             while (defaultMemberIterator.hasNext()){
                 if(defaultMemberIterator.next().getMembershipNumber()==shoulddel){
-                    System.out.println("The member deleted is a "+defaultMemberIterator.getClass().getSimpleName());
+                    System.out.println("You have deleted a default member");
                     defaultMemberIterator.remove();
                 }
                 else{
-                    System.out.println("Membership no not found");
+                    System.out.println("The membership no doesnt belong to a default member");
                 }
             }
             Iterator<Over60Member> oldMemberIterator = arrayOfOldMems.iterator();
             while (oldMemberIterator.hasNext()){
                 if(oldMemberIterator.next().getMembershipNumber()==shoulddel){
-                    System.out.println("The member deleted is a "+oldMemberIterator.getClass().getSimpleName());
+                    System.out.println("You have deleted a over 60 member");
                     oldMemberIterator.remove();
                 }
                 else{
-                    System.out.println("Membership no not found");
+                    System.out.println("The membership no doesnt belong to a over 60 member");
                 }
             }
 
@@ -208,7 +222,7 @@ public class MyGymManager extends Application {
                 System.out.print(anyobj.getLastName()+"      ");
                 System.out.print(anyobj.getMembershipNumber()+"             ");
                 System.out.print(anyobj.getRelativeName()+"             ");
-                System.out.print(anyobj.getMemDate()+"            ");
+                System.out.print(anyobj.getNewdate()+"            ");
                 System.out.println(anyobj.getClass().getSimpleName());
                 //line to get the membership date after its all sorted out
             }
@@ -217,7 +231,7 @@ public class MyGymManager extends Application {
                 System.out.print(anyobj.getLastName()+"      ");
                 System.out.print(anyobj.getMembershipNumber()+"             ");
                 System.out.print(anyobj.getRelativeName()+"             ");
-                System.out.print(anyobj.getMemDate()+"            ");
+                System.out.print(anyobj.getNewdate()+"            ");
                 System.out.println(anyobj.getClass().getSimpleName());
                 //line to get the membership date after its all sorted out
             }
@@ -226,7 +240,7 @@ public class MyGymManager extends Application {
                 System.out.print(anyobj.getLastName()+"      ");
                 System.out.print(anyobj.getMembershipNumber()+"             ");
                 System.out.print(anyobj.getRelativeName()+"             ");
-                System.out.print(anyobj.getMemDate()+"            ");
+                System.out.print(anyobj.getNewdate()+"            ");
                 System.out.println(anyobj.getClass().getSimpleName());
                 //line to get the membership date after its all sorted out
             }
@@ -247,9 +261,9 @@ public class MyGymManager extends Application {
             for(Over60Member anyonj : arrayOfOldMems){
                 allNames.add(anyonj.getFirstName());   //adds the names
             }
-//            System.out.println(allNames);
+
             Collections.sort(allNames);  //sorts array of names
-//            System.out.println(allNames);
+
             ArrayList<DefaultMember> sortedMems = new ArrayList<>();
 
             for(String oneName : allNames){
@@ -302,7 +316,7 @@ public class MyGymManager extends Application {
 
             //date
             TableColumn dateColumn = new TableColumn("Date");
-            dateColumn.setCellValueFactory(new PropertyValueFactory("memDate"));
+            dateColumn.setCellValueFactory(new PropertyValueFactory("newdate"));
 
             ObservableList<DefaultMember> dataForTable = FXCollections.observableArrayList();
             dataForTable.addAll(arrayOfStuMems);   //adding arraylist
@@ -360,7 +374,7 @@ public class MyGymManager extends Application {
                 }
             });
 
-            HBox searchStuff = new HBox(10,lblsearch,tfsearch,btnSearch);
+            HBox searchStuff = new HBox(10,lblsearch,tfsearch,btnSearch);   //hboxes creation and adding nodes
 
             VBox root = new VBox(10,searchStuff,table);
             ///////////////////////**/////////////////////////////////
@@ -374,7 +388,7 @@ public class MyGymManager extends Application {
         }
 
         // Write objects to file
-        FileOutputStream stuFileOutputStream = null;
+        FileOutputStream stuFileOutputStream = null;               //writing to file
         ObjectOutputStream stuObjectOutputStream = null;
         try{
             stuFileOutputStream = new FileOutputStream(new File("StudentArray.txt"));
@@ -432,7 +446,7 @@ public class MyGymManager extends Application {
         }
 
         System.out.println("End");
-//        System.exit(0);
+
     }
 
 
@@ -449,7 +463,7 @@ public class MyGymManager extends Application {
             }
             catch (Exception e){
                 System.out.println("Invalid Input Please try agian");
-                valIn.nextLine();
+                valIn.nextLine();   //clears the obj
             }
         }
 
@@ -465,7 +479,7 @@ public class MyGymManager extends Application {
             }
             catch (Exception e){
                 System.out.println("Invalid Input Please try agian");
-                valIn.nextLine();
+                valIn.nextLine();   //clears the obj
             }
         }
 
@@ -476,32 +490,8 @@ public class MyGymManager extends Application {
             System.out.print(anyobj.getFirstName()+"       ");
             System.out.print(anyobj.getLastName()+"      ");
             System.out.print(anyobj.getMembershipNumber()+"             ");
-            System.out.println(anyobj.getRelativeName()+"             ");
-            //line to get the membership date after its all sorted out
+            System.out.print(anyobj.getRelativeName()+"             ");
+            System.out.println(anyobj.getNewdate());
         }
-    }
-
-    public static String dateValidating(){
-        System.out.println("--Getting Membership Date--");
-        int year = validatingInts("Enter year : ");
-        int month ;
-        int date ;
-        while (true){
-            month = validatingInts("Enter month :");
-            if(month>12 || month < 1)
-                System.out.println("Invalid Month");
-            else
-                break;
-
-        }
-        while (true){
-            date = validatingInts("Enter date : ");
-            if(date>31 || date <1)
-                System.out.println("Invalid Date");
-            else
-                break;
-        }
-
-        return year+"/"+month+"/"+date;
     }
 }
